@@ -11,21 +11,23 @@ public class DukhartLineSimpleEditor : Editor
     SerializedProperty points;
     SerializedProperty pointPrefab;
     SerializedProperty color;
-    SerializedProperty drawGizmos;
     SerializedProperty loops;
     SerializedProperty inFront;
     SerializedProperty graphicsMode;
+
+    bool drawLineGizmos;
+    bool drawPointGizmos;
 
     List<bool> showPoint = new List<bool>();
     List<bool> showExtras = new List<bool>();
 
     void OnEnable()
     {
+
         DukhartLineSimple line = (DukhartLineSimple)target;
         points = serializedObject.FindProperty("points");
         pointPrefab = serializedObject.FindProperty("pointPrefab");
         color = serializedObject.FindProperty("color");
-        drawGizmos = serializedObject.FindProperty("drawGizmos");
         loops = serializedObject.FindProperty("loops");
         inFront = serializedObject.FindProperty("inFront");
 
@@ -39,7 +41,7 @@ public class DukhartLineSimpleEditor : Editor
                 showExtras.Add(false);
             }
         }
-        
+        drawLineGizmos = drawPointGizmos = true;
     }
 
     public override void OnInspectorGUI()
@@ -56,17 +58,20 @@ public class DukhartLineSimpleEditor : Editor
         EditorGUILayout.PropertyField(inFront);
         GUILayout.EndHorizontal();
         line.color = EditorGUILayout.ColorField(line.color);
-        GUILayout.BeginHorizontal("box", GUILayout.MaxWidth(100));
-        EditorGUIUtility.labelWidth = 100;
-        EditorGUILayout.PropertyField(drawGizmos);
-        GUILayout.EndHorizontal();
 
         GUILayout.BeginHorizontal("box");
-        if (GUILayout.Button("Toggle Point Gizmos")) {
+        if (GUILayout.Button("Line Gizmo")) {
+            line.drawGizmos = !drawLineGizmos;
+            drawLineGizmos = !drawLineGizmos;
+            EditorWindow view = EditorWindow.GetWindow<SceneView>();
+            view.Repaint();
+        }
+        if (GUILayout.Button("Point Gizmos")) {
             for (int i = 0; i < line.points.Count; i++){
                 LinePointComponent pointComp = line.points[i].GetComponent<LinePointComponent>();
-                pointComp.drawGizmos = !pointComp.drawGizmos;
+                pointComp.drawGizmos = !drawPointGizmos;
             }
+            drawPointGizmos = !drawPointGizmos;
             EditorWindow view = EditorWindow.GetWindow<SceneView>();
             view.Repaint();
         }
@@ -76,6 +81,8 @@ public class DukhartLineSimpleEditor : Editor
                 LinePointComponent pointComp = line.points[i].GetComponent<LinePointComponent>();
                 pointComp.drawGizmos = false;
             }
+            drawLineGizmos = false;
+            drawPointGizmos = false;
             EditorWindow view = EditorWindow.GetWindow<SceneView>();
             view.Repaint();
         }

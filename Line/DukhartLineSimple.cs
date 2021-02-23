@@ -34,32 +34,25 @@ public class DukhartLineSimple : MonoBehaviour
     // adds a point at the input index, index < 0 = end of the list
     public void AddPoint(int index = -1)
     {
-        PointData linePoint = new PointData(new Vector3(0,0,0));
+        Vector3 position = new Vector3(0,0,0);
+        //PointData linePoint = new PointData(new Vector3(0,0,0),0.1f, Color.green);
         if (points == null) {
             points = new List<GameObject>();
         }
         if (points.Count > 0)
         {
             int i = index <= 0 ? points.Count - 1 : index - 1;
-            Vector3 position = new Vector3(points[i].transform.position.x + 1, points[i].transform.position.y, points[i].transform.position.z);
-            linePoint.position = position;
+            position = new Vector3(points[i].transform.position.x + 1, points[i].transform.position.y, points[i].transform.position.z);
         }
-        AddPoint(linePoint, index);
-    }
-
-    // adds the input point to the end of the list
-    public void AddPoint(PointData point, int index = -1)
-    {
         // default index to the end of the list
         if (index < 0 || index > points.Count) {
             index = points.Count;
         }
-        //points.Insert(index, point);
-        SpawnPoint(index, point);
+        SpawnPoint(index, position);
     }
 
     // spawns a point and stores in Target.points at the input index, index < 0 = end of the list
-    public LinePointComponent SpawnPoint(int index, PointData pointData)
+    public LinePointComponent SpawnPoint(int index, Vector3 position)
     {
         if (pointPrefab == null) {
             Debug.Log("<color=red>Error: </color>Spawn Point Prefab Missing! " + index);
@@ -72,13 +65,10 @@ public class DukhartLineSimple : MonoBehaviour
         }
         GameObject linePointO = Instantiate<GameObject>(pointPrefab);
         LinePointComponent linePoint = linePointO.GetComponent<LinePointComponent>();
-        
         linePointO.transform.SetParent(transform);
-        linePointO.transform.position = pointData.position;
-        linePoint.color = pointData.color;
-        linePoint.size = pointData.size;
+        linePointO.transform.position = position;
 
-        points.Insert( index,linePointO);
+        points.Insert(index,linePointO);
         return linePoint;
     }
 
@@ -110,7 +100,7 @@ public class DukhartLineSimple : MonoBehaviour
             return true;
         }
     }
-    void OnDrawGizmosSelected()
+    void OnDrawGizmos()
     {
         if (drawGizmos){
             if (points.Count <= 1) return;
@@ -128,7 +118,6 @@ public class DukhartLineSimple : MonoBehaviour
             }
             GizmoHelpers.Defaults();
         }
-        
     }
     void CreateLineMaterial()
     {
@@ -168,17 +157,21 @@ public class DukhartLineSimple : MonoBehaviour
         // match our transform
         GL.MultMatrix(transform.localToWorldMatrix);
         // Draw lines
-        Vector3 v;
+        Vector3 v1 = points[0].transform.position;
+        Vector3 v2;
         GL.Begin(GL.LINES);
             // Vertex colors
             GL.Color(color);
-            for (int i = 0; i < points.Count; i++){
-                v = points[i].transform.position;
-                GL.Vertex3(v.x,v.y,v.z);
+            for (int i = 1; i < points.Count; i++){
+                v2 = points[i].transform.position;
+                GL.Vertex3(v1.x,v1.y,v1.z);
+                GL.Vertex3(v2.x,v2.y,v2.z);
+                v1 = v2;
             }
             if (loops) {
-                v = points[0].transform.position;
-                GL.Vertex3(v.x,v.y,v.z);
+                v2 = points[0].transform.position;
+                GL.Vertex3(v1.x,v1.y,v1.z);
+                GL.Vertex3(v2.x,v2.y,v2.z);
             } 
         GL.End();
         GL.PopMatrix();
