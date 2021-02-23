@@ -4,29 +4,36 @@ using UnityEngine;
 using UnityEditor;
 
 
-[CustomEditor(typeof(DukhartLine))]
+[CustomEditor(typeof(DukhartLineSimple))]
 [CanEditMultipleObjects]
-public class DukhartLineEditor : Editor
+public class DukhartLineSimpleEditor : Editor
 {
     SerializedProperty points;
     SerializedProperty pointPrefab;
     SerializedProperty color;
     SerializedProperty drawGizmos;
     SerializedProperty loops;
+    SerializedProperty inFront;
+    SerializedProperty graphicsMode;
 
-    List<bool> showPoint;
-    List<bool> showExtras;
+    List<bool> showPoint = new List<bool>();
+    List<bool> showExtras = new List<bool>();
 
     void OnEnable()
     {
-        DukhartLine line = (DukhartLine)target;
+        DukhartLineSimple line = (DukhartLineSimple)target;
         points = serializedObject.FindProperty("points");
         pointPrefab = serializedObject.FindProperty("pointPrefab");
         color = serializedObject.FindProperty("color");
         drawGizmos = serializedObject.FindProperty("drawGizmos");
         loops = serializedObject.FindProperty("loops");
+        graphicsMode = serializedObject.FindProperty("graphicsMode");
+        inFront = serializedObject.FindProperty("inFront");
 
-        showPoint = new List<bool>();
+        //if (showPoint) showPoint = new List<bool>();
+        showPoint.Clear();
+        //if (!showPoint) showExtras = new List<bool>();
+        showExtras.Clear();
         if (line.points != null) {
             for (int i = 0; i < line.points.Count; i++) {
                 showPoint.Add(false);
@@ -38,15 +45,20 @@ public class DukhartLineEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        DukhartLine line = (DukhartLine)target;
+        DukhartLineSimple line = (DukhartLineSimple)target;
         serializedObject.Update();
+        GUILayout.BeginHorizontal("box");
+        EditorGUIUtility.labelWidth = 75;
         EditorGUILayout.PropertyField(pointPrefab);
-
+        EditorGUIUtility.labelWidth = 90;
+        EditorGUILayout.PropertyField(graphicsMode);
+        GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal("box", GUILayout.MaxWidth(75));
         EditorGUIUtility.labelWidth = 50;
         EditorGUILayout.PropertyField(loops);
+        EditorGUILayout.PropertyField(inFront);
         GUILayout.EndHorizontal();
-        
+        line.color = EditorGUILayout.ColorField(line.color);
         GUILayout.BeginHorizontal("box", GUILayout.MaxWidth(100));
         EditorGUIUtility.labelWidth = 100;
         EditorGUILayout.PropertyField(drawGizmos);
@@ -98,7 +110,7 @@ public class DukhartLineEditor : Editor
     }
 
 
-    public void DrawPointGUI (DukhartLine line, int index) {
+    public void DrawPointGUI (DukhartLineSimple line, int index) {
         GameObject point = line.points[index];
         Vector3 newposi;
         float x = 0.0f;

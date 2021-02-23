@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LineMesh : MonoBehaviour
+public class IndexBuffer : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
