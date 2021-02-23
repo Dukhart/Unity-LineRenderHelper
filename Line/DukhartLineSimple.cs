@@ -3,33 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class DukhartLineSimple : MonoBehaviour
+public class DukhartLineSimple : DukhartLine
 {
     [SerializeField]
     public GameObject pointPrefab;
-    [SerializeField]
-    public Color color = Color.blue;
-    [SerializeField]
-    public Material lineMaterial;
-    [SerializeField]
-    public bool drawGizmos = false;
     // if true last point will connect to first point
     [SerializeField]
     public bool loops;
-    [SerializeField]
-    public bool inFront;
-
     // list of points that make up the line
     [SerializeField]
     public List<GameObject> points = new List<GameObject>();
-
-    DukhartLineSimple() {
-    }
-    void Awake () {
-        CreateLineMaterial();
-    }
-    void Start() {
-    }
 
     // adds a point at the input index, index < 0 = end of the list
     public void AddPoint(int index = -1)
@@ -67,38 +50,61 @@ public class DukhartLineSimple : MonoBehaviour
         LinePointComponent linePoint = linePointO.GetComponent<LinePointComponent>();
         linePointO.transform.SetParent(transform);
         linePointO.transform.position = position;
-
+        linePoint.index = index;
         points.Insert(index,linePointO);
         return linePoint;
     }
-
     // Remove the last point
-    public bool RemovePoint(int index = - 1)
+    public bool RemovePoint(int index = - 1, bool deletePoint = true)
     {
         if (index < 0 || index >= points.Count)
             index = points.Count - 1;
-        // remove the point
-        return RemovePoint(points[index]);
+        if (points.Count <= 2)
+        {
+            if (points.Count <= 0) {
+                Debug.LogWarning("<color=yellow>Warning!</color> No points detected to remove.\n");
+                return false;
+            }
+            else {
+                Debug.LogWarning("<color=yellow>Warning!</color> A line must have at least 2 points, Start & End.\n");
+            }
+        }
+        if (deletePoint)
+        {
+            //remove from list
+            if (Application.isEditor){
+                DestroyImmediate(points[index]);
+            } else {
+                Destroy(points[index]);
+            }
+        }
+        points.RemoveAt(index);
+        return true;
     }
     // removes the input point
-    public bool RemovePoint(GameObject point)
+    public bool RemovePoint(GameObject point, bool deletePoint = true)
     {
         if (points.Count <= 2)
         {
-            Debug.LogWarning("<color=yellow>Warning!</color> A line must have at least 2 points, Start & End.\n");
-            return false;
+            if (points.Count <= 0) {
+                Debug.LogWarning("<color=yellow>Warning!</color> No points detected to remove.\n");
+                return false;
+            }
+            else {
+                Debug.LogWarning("<color=yellow>Warning!</color> A line must have at least 2 points, Start & End.\n");
+            }
         }
-        else
+        if (deletePoint)
         {
             //remove from list
-            points.Remove(point);
             if (Application.isEditor){
                 DestroyImmediate(point);
             } else {
                 Destroy(point);
             }
-            return true;
         }
+        points.Remove(point);
+        return true;
     }
     void OnDrawGizmos()
     {
@@ -119,31 +125,7 @@ public class DukhartLineSimple : MonoBehaviour
             GizmoHelpers.Defaults();
         }
     }
-    void CreateLineMaterial()
-    {
-        if (!lineMaterial)
-        {
-            // Unity has a built-in shader that is useful for drawing
-            // simple colored things.
-            Shader shader;
-            if (inFront)
-                shader = Shader.Find("GUI/Text Shader");
-            else
-                shader = Shader.Find("Hidden/Internal-Colored");
-
-            lineMaterial = new Material(shader);
-            lineMaterial.hideFlags = HideFlags.HideAndDontSave;
-            // Turn on alpha blending
-            lineMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-            lineMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-            // Turn backface culling off
-            lineMaterial.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
-            // depth writes
-            lineMaterial.SetInt("_ZWrite",0);
-        }
-        lineMaterial.SetColor("_Color", color);
-        lineMaterial.SetColor("_EmissionColor", color);
-    }
+    
     // Will be called after all regular rendering is done
     public void OnRenderObject()
     {

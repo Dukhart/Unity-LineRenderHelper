@@ -23,7 +23,6 @@ public class DukhartLineSimpleEditor : Editor
 
     void OnEnable()
     {
-
         DukhartLineSimple line = (DukhartLineSimple)target;
         points = serializedObject.FindProperty("points");
         pointPrefab = serializedObject.FindProperty("pointPrefab");

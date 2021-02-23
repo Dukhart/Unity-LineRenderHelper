@@ -9,6 +9,8 @@ public class LinePointComponent : MonoBehaviour
     // gizmo colours
     public Color color;
     public bool drawGizmos = true;
+    [SerializeField]
+    public int index = 0;
 
     void OnDrawGizmos()
     {
