@@ -11,10 +11,15 @@ public class LinePointComponentEditor : Editor
     DukhartLineSimple line;
     void OnEnable()
     {
-        LinePointComponent point = (LinePointComponent)target;
-        index = point.index;
-        GameObject go = point.gameObject.transform.parent.gameObject;
-        line = go.GetComponent<DukhartLineSimple>();
+        if (target){
+            LinePointComponent point = (LinePointComponent)target;
+            if (point && point.gameObject && point.gameObject.transform.parent){
+                index = point.index;
+                GameObject go = point.gameObject.transform.parent.gameObject;
+                if (go)
+                    line = go.GetComponent<DukhartLineSimple>();
+            }
+        }
     }
     public void OnDestroy()
      {
