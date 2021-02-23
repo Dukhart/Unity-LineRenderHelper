@@ -27,7 +27,6 @@ public class DukhartLineSimpleEditor : Editor
         color = serializedObject.FindProperty("color");
         drawGizmos = serializedObject.FindProperty("drawGizmos");
         loops = serializedObject.FindProperty("loops");
-        graphicsMode = serializedObject.FindProperty("graphicsMode");
         inFront = serializedObject.FindProperty("inFront");
 
         //if (showPoint) showPoint = new List<bool>();
@@ -50,8 +49,6 @@ public class DukhartLineSimpleEditor : Editor
         GUILayout.BeginHorizontal("box");
         EditorGUIUtility.labelWidth = 75;
         EditorGUILayout.PropertyField(pointPrefab);
-        EditorGUIUtility.labelWidth = 90;
-        EditorGUILayout.PropertyField(graphicsMode);
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal("box", GUILayout.MaxWidth(75));
         EditorGUIUtility.labelWidth = 50;
@@ -142,10 +139,6 @@ public class DukhartLineSimpleEditor : Editor
         GUILayout.Label("Color");
         pointComp.color = EditorGUILayout.ColorField(pointComp.color);
         EditorGUILayout.EndVertical();
-        EditorGUILayout.BeginVertical("box");
-        GUILayout.Label("Tangent Color");
-        pointComp.tanColor = EditorGUILayout.ColorField(pointComp.tanColor);
-        EditorGUILayout.EndVertical();
         GUILayout.EndHorizontal();
 
         GUILayout.BeginHorizontal("box");
@@ -155,66 +148,12 @@ public class DukhartLineSimpleEditor : Editor
         showExtras[index] = EditorGUILayout.Foldout(showExtras[index], "Extras");
         GUILayout.EndHorizontal();
         if (showExtras[index]) {
-            Vector2 v2;
-            GUILayout.BeginHorizontal("box");
-            //width
-            EditorGUILayout.BeginVertical("box");
-            GUILayout.Label("Width");
-            GUILayout.BeginHorizontal("box");
-            GUILayout.Label("in");
-            pointComp.inWidth = EditorGUILayout.FloatField(pointComp.inWidth);
-            GUILayout.Label("out");
-            pointComp.outWidth = EditorGUILayout.FloatField(pointComp.outWidth);
-            EditorGUILayout.EndVertical();
-            GUILayout.EndHorizontal();
-            // strength
-            EditorGUILayout.BeginVertical("box");
-            GUILayout.Label("Strength");
-            GUILayout.BeginHorizontal("box");
-            GUILayout.Label("in");
-            pointComp.inStrength = EditorGUILayout.FloatField(pointComp.inStrength);
-            GUILayout.Label("out");
-            pointComp.outStrength = EditorGUILayout.FloatField(pointComp.outStrength);
-            EditorGUILayout.EndVertical();
-            GUILayout.EndHorizontal();
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal("box");
-            // in angle
-            EditorGUILayout.BeginVertical("box");
-            GUILayout.Label("In Angle");
-            GUILayout.BeginHorizontal("box");
-            GUILayout.Label("x");
-            x = EditorGUILayout.FloatField(pointComp.inAngle.x);
-            GUILayout.Label("y");
-            y = EditorGUILayout.FloatField(pointComp.inAngle.y);
-            v2 = new Vector2(x,y);
-            pointComp.inAngle = v2;
-            EditorGUILayout.EndVertical();
-            GUILayout.EndHorizontal();
-
-            // out angle
-            EditorGUILayout.BeginVertical("box");
-            GUILayout.Label("Out Angle");
-            GUILayout.BeginHorizontal("box");
-            GUILayout.Label("x");
-            x = EditorGUILayout.FloatField(pointComp.outAngle.x);
-            GUILayout.Label("y");
-            y = EditorGUILayout.FloatField(pointComp.outAngle.y);
-            v2 = new Vector2(x,y);
-            pointComp.outAngle = v2;
-            EditorGUILayout.EndVertical();
-            GUILayout.EndHorizontal();
-            GUILayout.EndHorizontal();
-
             if (GUILayout.Button("Remove Point")) {
-            if (line.RemovePoint(point)) {
-                showPoint.RemoveAt(index);
+                if (line.RemovePoint(point)) {
+                    showPoint.RemoveAt(index);
                 showExtras.RemoveAt(index);
+                }
             }
-                
         }
-        }
-        
     }
 }

@@ -2,13 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum GraphicsMode
-{
-    UnityGL = 0,
-    OpenGL = 1,
-    DirectX11 = 2,
-}
-
 [System.Serializable]
 public class DukhartLineSimple : MonoBehaviour
 {
@@ -29,8 +22,6 @@ public class DukhartLineSimple : MonoBehaviour
     // list of points that make up the line
     [SerializeField]
     public List<GameObject> points = new List<GameObject>();
-    [SerializeField]
-    public GraphicsMode graphicsMode = GraphicsMode.UnityGL;
 
     DukhartLineSimple() {
     }
@@ -81,21 +72,12 @@ public class DukhartLineSimple : MonoBehaviour
         }
         GameObject linePointO = Instantiate<GameObject>(pointPrefab);
         LinePointComponent linePoint = linePointO.GetComponent<LinePointComponent>();
-
+        
         linePointO.transform.SetParent(transform);
         linePointO.transform.position = pointData.position;
-
         linePoint.color = pointData.color;
-        linePoint.tanColor = pointData.tanColor;
-        linePoint.inStrength = pointData.inStrength;
-        linePoint.outStrength = pointData.outStrength;
-        linePoint.inWidth = pointData.inWidth;
-        linePoint.outWidth = pointData.outWidth;
         linePoint.size = pointData.size;
-        //points[index].SetPoint(linePointO);
-        //points[index].point = linePointO;
-        //linePoint.data = points[index];
-        
+
         points.Insert( index,linePointO);
         return linePoint;
     }
@@ -179,59 +161,26 @@ public class DukhartLineSimple : MonoBehaviour
         RenderLines();
     }
     void RenderLines() {
-        GameObject p1 = points[0];
-        for (int i = 0; i < points.Count; i++){
-            RenderLine(p1,points[i]);
-            p1 = points[i];
-        }
-        if (loops){
-            RenderLine(p1, points[0]);
-        }
-    }
-    void RenderLine(GameObject p1, GameObject p2) {
-        
-        switch (graphicsMode)
-        {
-            case GraphicsMode.UnityGL:
-                RenderLine_UnityGL(p1,p2);
-                break;
-            case GraphicsMode.OpenGL:
-                Debug.LogWarning("<color=yellow>Warning!</color> OpenGL not implemented defaulting to unityGL.\n");
-                RenderLine_UnityGL(p1,p2);
-                break;
-            case GraphicsMode.DirectX11:
-                Debug.LogWarning("<color=yellow>Warning!</color> DirectX11 not implemented defaulting to unityGL.\n");
-                RenderLine_UnityGL(p1,p2);
-                break;
-            default:
-                RenderLine_UnityGL(p1,p2);
-                break;
-        }
-        
-    }
-    void RenderLine_UnityGL(GameObject p1, GameObject p2){
-        Vector3 v1 = p1.transform.position;
-        Vector3 v2 = p2.transform.position;
         // Apply the line material
         lineMaterial.SetPass(0);
         GL.PushMatrix();
         // Set transformation matrix for drawing to
         // match our transform
         GL.MultMatrix(transform.localToWorldMatrix);
-
         // Draw lines
+        Vector3 v;
         GL.Begin(GL.LINES);
             // Vertex colors
             GL.Color(color);
-            // v1
-            GL.Vertex3(v1.x,v1.y,v1.z);
-            // v2
-            GL.Vertex3(v2.x,v2.y,v2.z);
+            for (int i = 0; i < points.Count; i++){
+                v = points[i].transform.position;
+                GL.Vertex3(v.x,v.y,v.z);
+            }
+            if (loops) {
+                v = points[0].transform.position;
+                GL.Vertex3(v.x,v.y,v.z);
+            } 
         GL.End();
         GL.PopMatrix();
-    }
-    void RenderLine_OpenGL(GameObject p1, GameObject p2) {
-    }
-    void RenderLine_DirectX11(GameObject p1,GameObject p2) {
     }
 }
