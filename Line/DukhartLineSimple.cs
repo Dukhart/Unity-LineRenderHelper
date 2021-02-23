@@ -143,7 +143,7 @@ public class DukhartLineSimple : DukhartLine
         Vector3 v2;
         GL.Begin(GL.LINES);
             // Vertex colors
-            GL.Color(color);
+            //GL.Color(c1);
             for (int i = 1; i < points.Count; i++){
                 v2 = points[i].transform.position;
                 GL.Vertex3(v1.x,v1.y,v1.z);

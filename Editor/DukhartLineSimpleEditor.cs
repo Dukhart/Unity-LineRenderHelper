@@ -14,7 +14,7 @@ public class DukhartLineSimpleEditor : Editor
     SerializedProperty loops;
     SerializedProperty inFront;
     SerializedProperty graphicsMode;
-
+    SerializedProperty lineMaterial;
     bool drawLineGizmos;
     bool drawPointGizmos;
 
@@ -29,7 +29,7 @@ public class DukhartLineSimpleEditor : Editor
         color = serializedObject.FindProperty("color");
         loops = serializedObject.FindProperty("loops");
         inFront = serializedObject.FindProperty("inFront");
-
+        lineMaterial = serializedObject.FindProperty("lineMaterial");
         //if (showPoint) showPoint = new List<bool>();
         showPoint.Clear();
         //if (!showPoint) showExtras = new List<bool>();
@@ -50,6 +50,7 @@ public class DukhartLineSimpleEditor : Editor
         GUILayout.BeginHorizontal("box");
         EditorGUIUtility.labelWidth = 75;
         EditorGUILayout.PropertyField(pointPrefab);
+        EditorGUILayout.PropertyField(lineMaterial);
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal("box", GUILayout.MaxWidth(75));
         EditorGUIUtility.labelWidth = 50;
@@ -86,29 +87,32 @@ public class DukhartLineSimpleEditor : Editor
             view.Repaint();
         }
         GUILayout.EndHorizontal();
-
-        GUILayout.Label("points");
-        GUILayout.BeginHorizontal("box");
-        if (GUILayout.Button("Add Point")) {
-            line.AddPoint();
-            showPoint.Add(true);
-            showExtras.Add(false);
-        }
-        if (GUILayout.Button("Remove Point")) {
-            if (line.RemovePoint(showPoint.Count - 1)) {
-                showPoint.RemoveAt(showPoint.Count - 1);
-                showExtras.RemoveAt(showPoint.Count - 1);
+        
+         GUILayout.BeginVertical("Box");
+            GUILayout.Label("Points");
+            GUILayout.BeginHorizontal("box");
+            if (GUILayout.Button("Add Point")) {
+                line.AddPoint();
+                showPoint.Add(true);
+                showExtras.Add(false);
             }
-                
-        }
-        GUILayout.EndHorizontal();
-
-        for (int i = 0; i < line.points.Count; i++) {
-            showPoint[i] = EditorGUILayout.Foldout(showPoint[i], "Point " + i);
-            if (showPoint[i]) {
-                DrawPointGUI(line, i);
+            if (GUILayout.Button("Remove Point")) {
+                if (line.RemovePoint(showPoint.Count - 1)) {
+                    showPoint.RemoveAt(showPoint.Count - 1);
+                    showExtras.RemoveAt(showPoint.Count - 1);
+                }
+                    
             }
-        }
+            GUILayout.EndHorizontal();
+            for (int i = 0; i < line.points.Count; i++) {
+                showPoint[i] = EditorGUILayout.Foldout(showPoint[i], "Point " + i);
+                if (showPoint[i]) {
+                    GUILayout.BeginVertical("GroupBox");
+                    DrawPointGUI(line, i);
+                    GUILayout.EndVertical ();
+                }
+            }
+        GUILayout.EndVertical ();
         serializedObject.ApplyModifiedProperties();
     }
 
