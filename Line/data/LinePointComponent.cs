@@ -5,13 +5,16 @@ using UnityEngine;
 [System.Serializable]
 public class LinePointComponent : MonoBehaviour
 {
-    public float size = 0.1f;
+    [SerializeField]
+    public float size;
     // gizmo colours
     public Color color;
     public bool drawGizmos = true;
     [SerializeField]
     public int index = 0;
-
+    LinePointComponent(){
+        size = 0.1f;
+    }
     void OnDrawGizmos()
     {
         if (drawGizmos) {

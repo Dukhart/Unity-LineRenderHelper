@@ -8,7 +8,8 @@ using UnityEditor;
 public class LinePointComponentEditor : Editor
 {
     int index;
-    DukhartLineSimple line;
+    DukhartLine line;
+    
     void OnEnable()
     {
         if (target){
@@ -17,7 +18,7 @@ public class LinePointComponentEditor : Editor
                 index = point.index;
                 GameObject go = point.gameObject.transform.parent.gameObject;
                 if (go)
-                    line = go.GetComponent<DukhartLineSimple>();
+                    line = go.GetComponent<DukhartLine>();
             }
         }
     }

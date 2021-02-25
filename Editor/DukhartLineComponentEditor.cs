@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-
-[CustomEditor(typeof(DukhartLineSimple))]
+[CustomEditor(typeof(DukhartLineComponent))]
 [CanEditMultipleObjects]
-public class DukhartLineSimpleEditor : Editor
+public class DukhartLineComponentEditor : Editor
 {
     SerializedProperty points;
     SerializedProperty pointPrefab;
@@ -22,7 +21,7 @@ public class DukhartLineSimpleEditor : Editor
 
     void OnEnable()
     {
-        DukhartLineSimple line = (DukhartLineSimple)target;
+        DukhartLineComponent line = (DukhartLineComponent)target;
         points = serializedObject.FindProperty("points");
         pointPrefab = serializedObject.FindProperty("pointPrefab");
         color = serializedObject.FindProperty("color");
@@ -43,7 +42,7 @@ public class DukhartLineSimpleEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        DukhartLineSimple line = (DukhartLineSimple)target;
+        DukhartLineComponent line = (DukhartLineComponent)target;
         serializedObject.Update();
         GUILayout.BeginHorizontal("box");
         EditorGUIUtility.labelWidth = 75;
@@ -114,7 +113,7 @@ public class DukhartLineSimpleEditor : Editor
     }
 
 
-    public void DrawPointGUI (DukhartLineSimple line, int index) {
+    public void DrawPointGUI (DukhartLineComponent line, int index) {
         GameObject point = line.points[index];
         Vector3 newposi;
         float x = 0.0f;
@@ -164,3 +163,4 @@ public class DukhartLineSimpleEditor : Editor
         }
     }
 }
+
