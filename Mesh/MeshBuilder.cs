@@ -12,25 +12,42 @@ static public class MeshBuilder
             new Vector3(0, 1, 0),
             new Vector3(1, 1, 0)
         };
+        //Debug.Log("Default Vs");
+        //Debug.Log(DebugTools.ArrayToString(v));
         return v;
     }
-    static public int[] Default_Tris(Vector3[] vertices, int numSides){
+    static public int[] Default_Tris(Vector3[] vertices, int numSides, bool loops){
         // calculate tris
         List<int> temp_list = new List<int>();
-        int[] p = new int[6]
-            {
-                // lower left triangle
-                0, 2, 1,
-                // upper right triangle
-                2, 3, 1
-            };
-        int n = vertices.GetLength(0)/numSides - 1;
-        for (int i =0; i < n; i++) {
-            for (int j = 0; j < 6; j++) {
-                int x = p[j]+(2*i);
-                temp_list.Add(x);
+        int numPoints = vertices.GetLength(0)/numSides;
+        int numFaces = (numPoints - 1) * numSides;
+        int pointNum = 0;
+        for (int i = 0; i < numPoints - 1; ++i) {
+            int j = 0;
+            // i  = column
+            for (j = 0; j < numSides - 1; ++j){
+                // tri 1
+                temp_list.Add(i * numSides + j);
+                temp_list.Add((i + 1) * numSides + j);
+                temp_list.Add(i * numSides + (j + 1));
+                // tri 2
+                temp_list.Add((i + 1) * numSides + j);
+                temp_list.Add((i + 1) * numSides + (j + 1));
+                temp_list.Add(i * numSides + (j + 1));
+                Debug.Log(j);
             }
+            Debug.Log(j);
+            // tri 1
+            temp_list.Add(i * numSides + j);
+            temp_list.Add((i + 1) * numSides + j);
+            temp_list.Add(i * numSides);
+            // tri 2
+            temp_list.Add((i + 1) * numSides + j);
+            temp_list.Add((i + 1) * numSides);
+            temp_list.Add(i * numSides);
         }
+        //Debug.Log("Tris");
+        //Debug.Log(DebugTools.ListToString(temp_list));
         return temp_list.ToArray();
     }
     static public Vector3[] Default_Normal(Vector3[] vertices){
@@ -58,6 +75,8 @@ static public class MeshBuilder
             j += 1;
             j = j >= 4 ? 0:j;
         }
+        Debug.Log("UVs");
+        Debug.Log(DebugTools.ListToString(temp_list));
         return temp_list.ToArray();
     }
 

@@ -15,6 +15,7 @@ public class DukhartLineComponentEditor : Editor
     SerializedProperty lineMaterial;
     bool drawLineGizmos;
     bool drawPointGizmos;
+    int sides;
 
     List<bool> showPoint = new List<bool>();
     List<bool> showExtras = new List<bool>();
@@ -22,6 +23,9 @@ public class DukhartLineComponentEditor : Editor
     void OnEnable()
     {
         DukhartLineComponent line = (DukhartLineComponent)target;
+        line.CreateLineMaterial();
+        line.BuildMesh();
+
         points = serializedObject.FindProperty("points");
         pointPrefab = serializedObject.FindProperty("pointPrefab");
         color = serializedObject.FindProperty("color");
@@ -43,6 +47,8 @@ public class DukhartLineComponentEditor : Editor
     public override void OnInspectorGUI()
     {
         DukhartLineComponent line = (DukhartLineComponent)target;
+        LineMesh lineMesh = line.gameObject.GetComponent<LineMesh>();
+
         serializedObject.Update();
         GUILayout.BeginHorizontal("box");
         EditorGUIUtility.labelWidth = 75;
@@ -50,11 +56,20 @@ public class DukhartLineComponentEditor : Editor
         EditorGUILayout.PropertyField(lineMaterial);
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal("box", GUILayout.MaxWidth(75));
+        if (lineMesh) {
+            GUILayout.Label("Sides");
+            lineMesh.NumSides = EditorGUILayout.IntField(lineMesh.NumSides);
+        }
+        
+
         EditorGUIUtility.labelWidth = 50;
         EditorGUILayout.PropertyField(loops);
         EditorGUILayout.PropertyField(inFront);
         GUILayout.EndHorizontal();
+
         line.color = EditorGUILayout.ColorField(line.color);
+        line.lineMaterial.SetColor("_Color", line.color);
+        line.lineMaterial.SetColor("_EmissionColor", line.color);
 
         GUILayout.BeginHorizontal("box");
         if (GUILayout.Button("Line Gizmo")) {

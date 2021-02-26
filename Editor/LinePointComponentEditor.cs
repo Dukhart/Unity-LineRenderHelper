@@ -19,6 +19,7 @@ public class LinePointComponentEditor : Editor
                 GameObject go = point.gameObject.transform.parent.gameObject;
                 if (go) {
                     line = go.GetComponent<DukhartLine>();
+                    line.UpdateMesh();
                 }
             }
         }
@@ -32,4 +33,13 @@ public class LinePointComponentEditor : Editor
              }
          }
      }
+    public override void OnInspectorGUI()
+    {
+        LinePointComponent point = (LinePointComponent)target;
+        GameObject go = point.gameObject.transform.parent.gameObject;
+        if (go) {
+            line = go.GetComponent<DukhartLine>();
+            line.UpdateMesh();
+        }
+    }
 }

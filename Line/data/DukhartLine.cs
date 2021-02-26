@@ -161,4 +161,5 @@ public class DukhartLine : MonoBehaviour
             GizmoHelpers.Defaults();
         }
     }
+    public virtual void UpdateMesh(){}
 }
