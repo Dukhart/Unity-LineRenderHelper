@@ -14,9 +14,10 @@ public class DukhartLineComponent : DukhartLine
         RenderLines();
     }
     void RenderLines() {
-        LinePlane line = gameObject.GetComponent<LinePlane>();
+        LineMesh line = gameObject.GetComponent<LineMesh>();
+        Mesh mesh = gameObject.GetComponent<MeshFilter>().mesh;
         //var a = ints1.All(ints2.Contains) && ints1.Count == ints2.Count;
-        if (points.Count != line.vertices.GetLength(0)/2) {
+        if (points.Count != mesh.vertices.GetLength(0)/line.NumSides) {
             line.BuildMesh(points);
             Debug.Log("Diff Count");
         }
@@ -25,10 +26,10 @@ public class DukhartLineComponent : DukhartLine
         }
     }
     void BuildMesh () {
-        LinePlane line;
-        if (!gameObject.GetComponent<LinePlane>())
-            line = gameObject.AddComponent<LinePlane>();
-        else line = gameObject.GetComponent<LinePlane>();
+        LineMesh line;
+        if (!gameObject.GetComponent<LineMesh>())
+            line = gameObject.AddComponent<LineMesh>();
+        else line = gameObject.GetComponent<LineMesh>();
 
         line.BuildMesh(points);
         if (lineMaterial) {

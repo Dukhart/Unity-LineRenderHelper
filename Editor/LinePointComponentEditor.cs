@@ -17,8 +17,9 @@ public class LinePointComponentEditor : Editor
             if (point && point.gameObject && point.gameObject.transform.parent){
                 index = point.index;
                 GameObject go = point.gameObject.transform.parent.gameObject;
-                if (go)
+                if (go) {
                     line = go.GetComponent<DukhartLine>();
+                }
             }
         }
     }

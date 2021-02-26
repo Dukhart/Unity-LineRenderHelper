@@ -100,14 +100,17 @@ public class DukhartLineComponentEditor : Editor
                 }
             }
             GUILayout.EndHorizontal();
-            for (int i = 0; i < line.points.Count; i++) {
-                showPoint[i] = EditorGUILayout.Foldout(showPoint[i], "Point " + i);
-                if (showPoint[i]) {
-                    GUILayout.BeginVertical("GroupBox");
-                    DrawPointGUI(line, i);
-                    GUILayout.EndVertical ();
+            if (line.points.Count > 0) {
+                for (int i = 0; i < line.points.Count; i++) {
+                    showPoint[i] = EditorGUILayout.Foldout(showPoint[i], "Point " + i);
+                    if (showPoint[i]) {
+                        GUILayout.BeginVertical("GroupBox");
+                        DrawPointGUI(line, i);
+                        GUILayout.EndVertical ();
+                    }
                 }
             }
+            
         GUILayout.EndVertical ();
         serializedObject.ApplyModifiedProperties();
     }
