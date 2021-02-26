@@ -27,8 +27,8 @@ public class LineMesh : MonoBehaviour
     public void BuildMesh(List<GameObject> points, bool loops){
         
         Vector3[] v = CalcMeshVerts(points);
-        Debug.Log("Vs");
-        Debug.Log(DebugTools.ArrayToString(v));
+        //Debug.Log("Vs");
+        //Debug.Log(DebugTools.ArrayToString(v));
         BuildMesh(v, loops);
     }
     
@@ -84,11 +84,10 @@ public class LineMesh : MonoBehaviour
         Vector3 origin = point.transform.localPosition;
         // get the first point
         Vector3 v1 = origin;
-        v1.y -= lc.size;
-        v1 = VectorMath.RotatePointAroundPivot(v1,origin,point.transform.localRotation);
+        v1.y -= lc.size * point.transform.localScale.magnitude;
         for (int i = 0; i < NumSides; i++) {
-            
             verts[i] = VectorMath.RotatePointAroundPivot(v1,origin, new Vector3(-angle*i,0,0));
+            verts[i] = VectorMath.RotatePointAroundPivot(verts[i],origin,point.transform.localRotation);
         }
         return verts;
     }

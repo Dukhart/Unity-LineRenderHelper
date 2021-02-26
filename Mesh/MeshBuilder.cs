@@ -12,7 +12,7 @@ static public class MeshBuilder
             new Vector3(0, 1, 0),
             new Vector3(1, 1, 0)
         };
-        //Debug.Log("Default Vs");
+        //Debug.Log("Default Verts");
         //Debug.Log(DebugTools.ArrayToString(v));
         return v;
     }
@@ -22,9 +22,11 @@ static public class MeshBuilder
         int numPoints = vertices.GetLength(0)/numSides;
         int numFaces = (numPoints - 1) * numSides;
         int pointNum = 0;
-        for (int i = 0; i < numPoints - 1; ++i) {
+        // i  = column
+        int i = 0;
+        for (i = 0; i < numPoints - 1; ++i) {
             int j = 0;
-            // i  = column
+            // j = row
             for (j = 0; j < numSides - 1; ++j){
                 // tri 1
                 temp_list.Add(i * numSides + j);
@@ -34,9 +36,7 @@ static public class MeshBuilder
                 temp_list.Add((i + 1) * numSides + j);
                 temp_list.Add((i + 1) * numSides + (j + 1));
                 temp_list.Add(i * numSides + (j + 1));
-                Debug.Log(j);
             }
-            Debug.Log(j);
             // tri 1
             temp_list.Add(i * numSides + j);
             temp_list.Add((i + 1) * numSides + j);
@@ -44,6 +44,29 @@ static public class MeshBuilder
             // tri 2
             temp_list.Add((i + 1) * numSides + j);
             temp_list.Add((i + 1) * numSides);
+            temp_list.Add(i * numSides);
+        }
+        if (loops) {
+            int c = vertices.GetLength(0);
+            int j = 0;
+            i = numPoints - 1;
+            // j  = row
+            for (j = 0; j < numSides - 1; ++j){
+                // tri 1
+                temp_list.Add(i * numSides + j);
+                temp_list.Add(j);
+                temp_list.Add(i * numSides + (j + 1));
+                // tri 2
+                temp_list.Add(j);
+                temp_list.Add(j + 1);
+                temp_list.Add(i * numSides + (j + 1));
+            }
+            temp_list.Add(i * numSides + j);
+            temp_list.Add(j);
+            temp_list.Add(i * numSides);
+            // tri 2
+            temp_list.Add(j);
+            temp_list.Add(0);
             temp_list.Add(i * numSides);
         }
         //Debug.Log("Tris");
@@ -75,8 +98,8 @@ static public class MeshBuilder
             j += 1;
             j = j >= 4 ? 0:j;
         }
-        Debug.Log("UVs");
-        Debug.Log(DebugTools.ListToString(temp_list));
+        //Debug.Log("UVs");
+        //Debug.Log(DebugTools.ListToString(temp_list));
         return temp_list.ToArray();
     }
 
