@@ -25,7 +25,7 @@ public class DukhartLine : MonoBehaviour
     void Awake () {
         CreateLineMaterial();
     }
-    void CreateLineMaterial()
+    public void CreateLineMaterial()
     {
         if (!lineMaterial)
         {

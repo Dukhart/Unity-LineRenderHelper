@@ -5,7 +5,8 @@ using UnityEngine;
 [System.Serializable]
 public class DukhartLineComponent : DukhartLine
 {
-    public void Awake(){
+    public void Awake() {
+        CreateLineMaterial();
         BuildMesh();
     }
     // Will be called after all regular rendering is done
@@ -32,6 +33,7 @@ public class DukhartLineComponent : DukhartLine
         else line = gameObject.GetComponent<LineMesh>();
 
         line.BuildMesh(points);
+
         if (lineMaterial) {
             MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
             meshRenderer.sharedMaterial = lineMaterial;
