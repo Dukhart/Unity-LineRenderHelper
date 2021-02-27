@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum logType {
+    log,
+    warning,
+    error,
+    assert,
+};
 public static class DebugTools
 {
     // Start is called before the first frame update
@@ -38,5 +44,24 @@ public static class DebugTools
     public static string ListToString (List<Vector3> collection) {
         return ArrayToString(collection.ToArray());
     }
-    
+    public static void Log(string msg, logType lvl = logType.log){
+        switch (lvl)
+        {
+            case logType.log:
+                Debug.Log(msg);
+            break;
+            case logType.warning:
+                Debug.LogWarning("<color=yellow>Warning!</color> " + msg);
+            break;
+            case logType.error:
+                Debug.LogError("<color=red>Error!</color> " + msg);
+            break;
+            case logType.assert:
+                Debug.LogError("<color=pink>Assert Failed!</color> " + msg);
+            break;
+            default:
+            Debug.Log(msg);
+            break;
+        }
+    }
 }

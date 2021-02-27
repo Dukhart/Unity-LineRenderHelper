@@ -47,7 +47,6 @@ public class DukhartLineComponentEditor : Editor
     public override void OnInspectorGUI()
     {
         DukhartLineComponent line = (DukhartLineComponent)target;
-        LineMesh lineMesh = line.gameObject.GetComponent<LineMesh>();
 
         serializedObject.Update();
         GUILayout.BeginHorizontal("box");
@@ -56,12 +55,12 @@ public class DukhartLineComponentEditor : Editor
         EditorGUILayout.PropertyField(lineMaterial);
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal("box", GUILayout.MaxWidth(75));
-        if (lineMesh) {
+        if (line) {
+            line.UpdateAll();
             GUILayout.Label("Sides");
-            lineMesh.NumSides = EditorGUILayout.IntField(lineMesh.NumSides);
+            line.NumSides = EditorGUILayout.IntField(line.NumSides);
         }
         
-
         EditorGUIUtility.labelWidth = 50;
         EditorGUILayout.PropertyField(loops);
         EditorGUILayout.PropertyField(inFront);
@@ -101,7 +100,7 @@ public class DukhartLineComponentEditor : Editor
         GUILayout.EndHorizontal();
         
          GUILayout.BeginVertical("Box");
-            GUILayout.Label("Points");
+            GUILayout.Label("Points", GUITools.TitleStyle);
             GUILayout.BeginHorizontal("box");
             if (GUILayout.Button("Add Point")) {
                 line.AddPoint();
@@ -111,12 +110,13 @@ public class DukhartLineComponentEditor : Editor
             if (GUILayout.Button("Remove Point")) {
                 if (line.RemovePoint(showPoint.Count - 1)) {
                     showPoint.RemoveAt(showPoint.Count - 1);
-                    showExtras.RemoveAt(showPoint.Count - 1);
+                    showExtras.RemoveAt(showExtras.Count - 1);
                 }
             }
             GUILayout.EndHorizontal();
             if (line.points.Count > 0) {
                 for (int i = 0; i < line.points.Count; i++) {
+                    //if (!showPoint[i]) break;
                     showPoint[i] = EditorGUILayout.Foldout(showPoint[i], "Point " + i);
                     if (showPoint[i]) {
                         GUILayout.BeginVertical("GroupBox");
@@ -132,6 +132,8 @@ public class DukhartLineComponentEditor : Editor
 
 
     public void DrawPointGUI (DukhartLineComponent line, int index) {
+        //var centeredStyle = GUI.skin.GetStyle("Label");
+        //centeredStyle.alignment = TextAnchor.UpperCenter;
         GameObject point = line.points[index];
         Vector3 newposi;
         float x = 0.0f;
@@ -155,6 +157,7 @@ public class DukhartLineComponentEditor : Editor
         GUILayout.BeginHorizontal("box");
         GUILayout.Label("Size");
         pointComp.size = EditorGUILayout.FloatField(pointComp.size);
+        GUILayout.Label("index " + pointComp.index);
         GUILayout.EndHorizontal();
 
         // color
@@ -172,10 +175,50 @@ public class DukhartLineComponentEditor : Editor
         showExtras[index] = EditorGUILayout.Foldout(showExtras[index], "Extras");
         GUILayout.EndHorizontal();
         if (showExtras[index]) {
-            if (GUILayout.Button("Remove Point")) {
-                if (line.RemovePoint(point)) {
-                    showPoint.RemoveAt(index);
-                    showExtras.RemoveAt(index);
+            if (line) {
+                GUILayout.BeginHorizontal("box");
+                if (GUILayout.Button("<-")){
+                    int i = index;
+                    line.ShiftPoint(index, false);
+                    index = pointComp.index;
+                    
+                    showExtras[i] = false;
+                    showPoint[i] = false;
+                    showExtras[index] = true;
+                    showPoint[index] = true;
+                    
+                    EditorWindow view = EditorWindow.GetWindow<SceneView>();
+                    view.Repaint();
+                }
+                GUILayout.Label("Shift", GUITools.CenterStyle);
+                if (GUILayout.Button("->")) {
+                    // store old index
+                    int i = index;
+                    line.ShiftPoint(index, true);
+                    index = pointComp.index;
+                    
+                    showExtras[i] = false;
+                    showPoint[i] = false;
+                    showExtras[index] = true;
+                    showPoint[index] = true;
+
+                    EditorWindow view = EditorWindow.GetWindow<SceneView>();
+                    view.Repaint();
+                }
+                GUILayout.EndHorizontal();
+                GUILayout.BeginHorizontal("box");
+                    if (GUILayout.Button("<-")){
+                        line.AddPoint(index, false);
+                    }
+                    GUILayout.Label("Add", GUITools.CenterStyle);
+                    if (GUILayout.Button("->")){
+                        line.AddPoint(index, true);
+                    }
+                GUILayout.EndHorizontal();
+                if (GUILayout.Button("Remove Point")) {
+                    //if (line.RemovePoint(pointComp.gameObject)) {
+                    //}
+                    DestroyImmediate(pointComp.gameObject);
                 }
             }
         }

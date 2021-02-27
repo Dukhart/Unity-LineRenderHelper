@@ -21,7 +21,6 @@ static public class MeshBuilder
         List<int> temp_list = new List<int>();
         int numPoints = vertices.GetLength(0)/numSides;
         int numFaces = (numPoints - 1) * numSides;
-        int pointNum = 0;
         // i  = column
         int i = 0;
         for (i = 0; i < numPoints - 1; ++i) {
