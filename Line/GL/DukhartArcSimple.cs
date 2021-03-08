@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class DukhartArcSimple : DukhartLine
 {
-    [SerializeField]
-    public float length;
-    [SerializeField]
     public int resolution;
     [SerializeField]
-    public Vector3 angle;
+    float length;
+    [SerializeField]
+    Vector3 angle;
 
     DukhartArcSimple() {
         length = 100;

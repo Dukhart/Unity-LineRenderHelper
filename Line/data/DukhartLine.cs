@@ -12,13 +12,13 @@ public class DukhartLine : MonoBehaviour
     [SerializeField]
     public bool drawGizmos = false;
     [SerializeField]
-    public bool inFront;
+    bool inFront;
     // if true last point will connect to first point
     [SerializeField]
     public bool loops;
     // list of points that make up the line
     [SerializeField]
-    public GameObject pointPrefab;
+    GameObject pointPrefab;
     [SerializeField]
     public List<GameObject> points = new List<GameObject>();
 
@@ -79,7 +79,7 @@ public class DukhartLine : MonoBehaviour
     // adds a point at the input index, index < 0 = end of the list
     public void AddPoint(int index = -1)
     {
-        Vector3 position = new Vector3(0,0,0);
+        Vector3 position = transform.position;
         //PointData linePoint = new PointData(new Vector3(0,0,0),0.1f, Color.green);
         if (points == null) {
             points = new List<GameObject>();
@@ -129,7 +129,7 @@ public class DukhartLine : MonoBehaviour
         GameObject linePointO = Instantiate<GameObject>(pointPrefab);
         LinePointComponent linePoint = linePointO.GetComponent<LinePointComponent>();
         linePointO.transform.SetParent(transform);
-        linePointO.transform.position = position;
+        linePointO.transform.SetPositionAndRotation(position, Quaternion.Euler(0, -90, 0));
         linePoint.index = index;
         if (index < points.Count - 1) {
             UpdatePointIndices(index);
