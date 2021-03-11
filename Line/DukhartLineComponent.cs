@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEditor;
 [System.Serializable]
 public class DukhartLineComponent : DukhartLine
 {
@@ -17,13 +17,16 @@ public class DukhartLineComponent : DukhartLine
         }
     }
 
-    public void Awake() {
+    private void Awake() {
         // build the mesh
         BuildMesh();
-        // add materials
-        AssignMaterial();
         // if has collision add collider
         if (hasCollision) AddCollider();
+    }
+    private void Start()
+    {
+        // add materials
+        AssignMaterial();
     }
     // Rebuilds Mesh
     public override void Rebuild() {
@@ -58,6 +61,10 @@ public class DukhartLineComponent : DukhartLine
         AssignMaterial();
         // if has collision add collider
         if (hasCollision) AddCollider();
+    }
+    private void OnEnable()
+    {
+        UpdateAll();
     }
     // Will be called after all regular rendering is done
     public void OnRenderObject()
@@ -155,7 +162,7 @@ public class DukhartLineComponent : DukhartLine
         mesh.triangles = tris;
         mesh.normals = normals;
         mesh.uv = uv;
-        meshFilter.sharedMesh = mesh;
+        if (meshFilter)meshFilter.sharedMesh = mesh;
     }
     // calculates the vertices at a point
     public Vector3[] CalcPointVertices(GameObject point){
@@ -184,8 +191,7 @@ public class DukhartLineComponent : DukhartLine
             meshRenderer = gameObject.AddComponent<MeshRenderer>();
         else meshRenderer = gameObject.GetComponent<MeshRenderer>();
         // get / create line material
-        if (lineMaterial) {
-            meshRenderer = gameObject.GetComponent<MeshRenderer>();
+        if (lineMaterial != null) {
             meshRenderer.sharedMaterial = lineMaterial;
         } else {
             CreateLineMaterial();
@@ -208,4 +214,5 @@ public class DukhartLineComponent : DukhartLine
         else col = gameObject.GetComponent<MeshCollider>();
         col.sharedMesh.vertices = verts;
     }
+
 }

@@ -16,16 +16,15 @@ public class DukhartLineComponentEditor : Editor
     bool drawLineGizmos;
     bool drawPointGizmos;
     int sides;
-
+    bool loopsListener;
     List<bool> showPoint = new List<bool>();
     List<bool> showExtras = new List<bool>();
 
     void OnEnable()
     {
         DukhartLineComponent line = (DukhartLineComponent)target;
-        line.CreateLineMaterial();
         line.BuildMesh();
-
+        line.UpdateAll();
         points = serializedObject.FindProperty("points");
         pointPrefab = serializedObject.FindProperty("pointPrefab");
         color = serializedObject.FindProperty("color");
@@ -42,6 +41,8 @@ public class DukhartLineComponentEditor : Editor
             }
         }
         drawLineGizmos = drawPointGizmos = true;
+        sides = line.NumSides;
+        loopsListener = loops.boolValue;
     }
 
     public override void OnInspectorGUI()
@@ -56,13 +57,27 @@ public class DukhartLineComponentEditor : Editor
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal("box", GUILayout.MaxWidth(75));
         if (line) {
-            line.UpdateAll();
             GUILayout.Label("Sides");
             line.NumSides = EditorGUILayout.IntField(line.NumSides);
+            if (sides != line.NumSides)
+            {
+                line.Rebuild();
+                sides = line.NumSides;
+                EditorWindow view = EditorWindow.GetWindow<SceneView>();
+                view.Repaint();
+            }
         }
         
         EditorGUIUtility.labelWidth = 50;
         EditorGUILayout.PropertyField(loops);
+        if (loopsListener != loops.boolValue)
+        {
+            loopsListener = loops.boolValue;
+            line.Rebuild();
+            sides = line.NumSides;
+            EditorWindow view = EditorWindow.GetWindow<SceneView>();
+            view.Repaint();
+        }
         EditorGUILayout.PropertyField(inFront);
         GUILayout.EndHorizontal();
 
@@ -83,8 +98,8 @@ public class DukhartLineComponentEditor : Editor
                 pointComp.drawGizmos = !drawPointGizmos;
             }
             drawPointGizmos = !drawPointGizmos;
-            EditorWindow view = EditorWindow.GetWindow<SceneView>();
-            view.Repaint();
+            //EditorWindow view = EditorWindow.GetWindow<SceneView>();
+            //view.Repaint();
         }
         if (GUILayout.Button("off Gizmos")) {
             line.drawGizmos = false;
